@@ -1,32 +1,28 @@
 pipeline {
     agent any
+    
+    tools {
+        jdk 'java17'
+        maven 'maven3'
+    }
+    
+    environment {
+        GIT_REPO = 'https://github.com/Anurag00Kashyap/jenkins-example.git'
+        BRANCH = 'master'
+    }
 
     stages {
-        stage ('Compile Stage') {
-
+        stage('Pull Code from GIT') {
             steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn clean compile'
-                }
+                git branch: "${BRANCH}" , url: "${GIT_REPO}"
             }
         }
-
-        stage ('Testing Stage') {
-
+        
+        stage('Maven Compile') {
             steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn test'
-                }
-            }
-        }
-
-
-        stage ('Deployment Stage') {
-            steps {
-                withMaven(maven : 'maven_3_5_0') {
-                    sh 'mvn deploy'
-                }
+                sh "mvn clean compile"
             }
         }
     }
 }
+
